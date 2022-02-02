@@ -14,7 +14,7 @@ done
 BASEPORT=4650
 REPO="https://github.com/hogsmill/monte-carlo.git"
 MAINAPP="monte-carlo"
-MAINCOLLECTION="googleMeet"
+MAINCOLLECTION="monteCarlo"
 MAINNAME="Monte Carlo"
 ROUTES=(
   '',''
