@@ -1,0 +1,40 @@
+<template>
+  <div class="actions">
+    <i class="fas fa-file-alt" title="Load Backlog" :class="{ 'selected': scope == 'loadBacklog' }" @click="setScope('loadBacklog')" />
+    <i class="fas fa-chart-line" title="Show Forecast" :class="{ 'selected': scope == 'showForecast' }" @click="setScope('showForecast')" />
+  </div>
+</template>
+
+<script>
+export default {
+  computed: {
+    scope() {
+      return this.$store.getters.getScope
+    }
+  },
+  methods: {
+    setScope(scope) {
+      this.$store.dispatch('updateScope', scope)
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+  .actions {
+    .fas {
+      margin: 12px;
+      font-size: 48pt;
+      color: #888;
+
+      &:hover {
+        color: #444;
+        cursor: pointer;
+      }
+
+      &.selected {
+        color: #f4511e;
+      }
+    }
+  }
+</style>
