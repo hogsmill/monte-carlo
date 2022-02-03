@@ -33,7 +33,6 @@ function analyse(data, oldest) {
 
 function createBacklog(data) {
   const oldest = oldestStartDate(data)
-  console.log('oldest', oldest)
   const backlog = []
   for (let i = 0; i < data.length; i++) {
     const analysed = analyse(data[i], oldest)
