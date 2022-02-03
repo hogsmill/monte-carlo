@@ -1,10 +1,10 @@
 <template>
   <div class="forecast">
     <h2>
-      Current Backlog: {{ backlog.length }} items
+      Current Backlog: {{ backlog.length }} items, {{ completed.length }} completed
     </h2>
     <h3>
-      Forecasting to {{ config.runTo }} items using {{ config.runs }} runs
+      Forecasting to complete remaining {{ backlog.length - completed.length }} items using {{ config.runs }} runs
     </h3>
   </div>
 </template>
@@ -17,6 +17,9 @@ export default {
     },
     backlog() {
       return this.$store.getters.getBacklog
+    },
+    completed() {
+      return this.$store.getters.getCompleted
     }
   }
 }

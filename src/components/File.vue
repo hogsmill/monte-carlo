@@ -37,10 +37,18 @@ export default {
   components: {
     Delimiter
   },
+  computed: {
+    completed() {
+      return this.$store.getters.getCompleted
+    },
+    backlog() {
+      return this.$store.getters.getBacklog
+    }
+  },
   created() {
     bus.$on('backlogLoaded', (data) => {
       this.$store.dispatch('updateBacklog', data.backlog)
-      alert('Backlog loaded. Backlog has ' + data.backlog.length + ' items')
+      alert('Backlog loaded. Backlog has ' + this.backlog.length + ' items, ' + this.completed.length + ' completed')
       document.getElementById('backlog-file').value = ''
     })
   },

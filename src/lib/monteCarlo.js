@@ -4,12 +4,12 @@ function getNoOfCardsForDay(cardsPerDay) {
   return cardsPerDay[index]
 }
 
-function getCardsToRunTo(config, cards) {
+function getCardsToRunTo(config, cards, completed) {
   let runConfig = {}
   if (config.runTo == 'Remaining') {
     runConfig = {
-      from: cards.length,
-      to: 25 - cards.length
+      from: completed.length,
+      to: cards.length - completed.length
     }
   } else {
     runConfig = {
@@ -42,7 +42,7 @@ function monteCarlo(cardsPerDay, startFrom, runs, runTo) {
   return results
 }
 
-function cardsPerDayDistribution(cards, from) {
+function cardsPerDayDistribution(cards) {
   const cardsPerDay = {}
   for (let i = 0; i < cards.length; i++) {
     // Catch if delivery is undefined - need to find root cause
@@ -55,7 +55,7 @@ function cardsPerDayDistribution(cards, from) {
     }
   }
   const days = [],
-        min = from ? from : Math.min(...Object.keys(cardsPerDay)),
+        min = Math.min(...Object.keys(cardsPerDay)),
         max = Math.max(...Object.keys(cardsPerDay))
   for (let j = min; j <= max; j++) {
     const day = cardsPerDay[j] ? cardsPerDay[j] : 0
@@ -92,17 +92,19 @@ function percentages(counts, days, config) {
   return percentiles
 }
 
-const MonteCarlo = {
+module.exports = {
 
-  run: function(cards, config) {
+  run: function(cards, completed, config) {
     const data = {
       days: [],
       counts: []
     }
-    if (cards.length) {
-      const cardsToRunTo = getCardsToRunTo(config, cards)
-      const cardsPerDay = cardsPerDayDistribution(cards, cardsToRunTo.from)
+    if (completed.length) {
+      const cardsToRunTo = getCardsToRunTo(config, cards, completed)
+      const cardsPerDay = cardsPerDayDistribution(completed)
+      console.log('cardsPerDay', cardsPerDay)
       const results = monteCarlo(cardsPerDay.cards, cardsPerDay.startFrom, config.runs, cardsToRunTo.to)
+      console.log('results', results)
       const max = Math.max(...Object.keys(results))
       for (let i = cardsPerDay.startFrom; i <= max; i++) {
         data.days.push(i)
@@ -115,5 +117,3 @@ const MonteCarlo = {
   }
 
 }
-
-export default MonteCarlo

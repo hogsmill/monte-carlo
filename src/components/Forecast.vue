@@ -1,16 +1,33 @@
 <template>
   <div class="forecast">
-    <button @click="forecast()">
+    <button class="btn btn-info" @click="forecast()">
       Forecast
     </button>
     <div>
       <table v-if="results.percentiles[50]" class="results">
+        <thead>
+          <tr>
+            <th>
+              Probability
+            </th>
+            <th>
+              Complete In
+            </th>
+            <th>
+              Date
+            </th>
+          </tr>
+        </thead>
+        <tbody>
         <tr>
           <td>
             50%
           </td>
           <td>
             {{ results.percentiles[50] }} days
+          </td>
+          <td>
+            {{ getDate(results.percentiles[50]) }}
           </td>
         </tr>
         <tr>
@@ -20,6 +37,9 @@
           <td>
             {{ results.percentiles[75] }} days
           </td>
+          <td>
+            {{ getDate(results.percentiles[75]) }}
+          </td>
         </tr>
         <tr>
           <td>
@@ -27,6 +47,9 @@
           </td>
           <td>
             {{ results.percentiles[90] }} days
+          </td>
+          <td>
+            {{ getDate(results.percentiles[90]) }}
           </td>
         </tr>
         <tr>
@@ -36,21 +59,29 @@
           <td>
             {{ results.percentiles[95] }} days
           </td>
+          <td>
+            {{ getDate(results.percentiles[95]) }}
+          </td>
         </tr>
         <tr>
           <td>
-           99%
+            99%
           </td>
           <td>
             {{ results.percentiles[99] }} days
           </td>
+          <td>
+            {{ getDate(results.percentiles[99]) }}
+          </td>
         </tr>
+        </tbody>
       </table>
     </div>
   </div>
 </template>
 
 <script>
+import dateFuns from '../lib/dates.js'
 import monteCarlo from '../lib/monteCarlo.js'
 
 export default {
@@ -67,11 +98,21 @@ export default {
     },
     backlog() {
       return this.$store.getters.getBacklog
+    },
+    completed() {
+      return this.$store.getters.getCompleted
     }
   },
   methods: {
+    getDate(d) {
+      return dateFuns.daysFromToday(d).toDateString()
+    },
     forecast() {
-      this.results = monteCarlo.run(this.backlog, this.config)
+      const config = {
+        runs: 1000,
+        runTo: 'Remaining'
+      }
+      this.results = monteCarlo.run(this.backlog, this.completed, config)
     }
   }
 }
@@ -79,11 +120,16 @@ export default {
 
 <style lang="scss">
   .results {
-    margin: 12px auto;
+    margin: 24px auto;
 
-    td {
-      padding: 6px;
-      border: 1px solid;
+    th {
+      font-weight: bold;
+    }
+
+    th, td {
+      font-size: x-large;
+      padding: 18px;
+      border: 1px solid #bbb;
     }
   }
 </style>

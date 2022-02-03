@@ -11,10 +11,11 @@ export const store = new Vuex.Store({
     localStorageStatus: true,
     tab: 'forecast',
     backlog: [],
+    completed: [],
     scope: '',
     config: {
       runs: 1000,
-      runTo: 50
+      runTo: 'Remaining'
     }
   },
   getters: {
@@ -39,6 +40,9 @@ export const store = new Vuex.Store({
     getBacklog: (state) => {
       return state.backlog
     },
+    getCompleted: (state) => {
+      return state.completed
+    },
     getScope: (state) => {
       return state.scope
     }
@@ -58,6 +62,12 @@ export const store = new Vuex.Store({
     },
     updateBacklog: (state, payload) => {
       state.backlog = payload
+      state.completed = []
+      for (let i = 0; i < state.backlog.length; i++) {
+        if (state.backlog[i].delivery) {
+          state.completed.push(state.backlog[i])
+        }
+      }
     },
     updateScope: (state, payload) => {
       state.scope = payload

@@ -40,7 +40,7 @@ socket.on('updateConnections', (data) => { bus.$emit('updateConnections', data) 
 
 // Send
 
-bus.$on('sendLoadBacklog', (data) => { bus.$emit('backlogLoaded', data) })
+bus.$on('sendBacklogLoaded', (data) => { bus.$emit('backlogLoaded', data) })
 
 // Receive
 

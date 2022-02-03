@@ -47,12 +47,6 @@ export default {
     },
     scope() {
       return this.$store.getters.getScope
-    },
-    config() {
-      return this.$store.getters.getConfig
-    },
-    backlog() {
-      return this.$store.getters.getBacklog
     }
   },
   created() {

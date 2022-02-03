@@ -24,8 +24,8 @@ ON_DEATH((signal, err) => {
   })
 })
 
-global.TextEncoder = require("util").TextEncoder
-global.TextDecoder = require("util").TextDecoder
+global.TextEncoder = require('util').TextEncoder
+global.TextDecoder = require('util').TextDecoder
 
 let httpServer
 let io

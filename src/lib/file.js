@@ -1,13 +1,9 @@
 
 import bus from '../socket.js'
+import dateFuns from './dates.js'
 
 const papa = require('papaparse')
 const { v4: uuidv4 } = require('uuid')
-
-function parseDate(d) {
-  d = d.split('-')
-  return new Date(parseInt(d[2]), parseInt(d[1]) - 1, parseInt(d[0]))
-}
 
 function daysDiff(startDate, endDate) {
   const diff = endDate - startDate
@@ -15,9 +11,9 @@ function daysDiff(startDate, endDate) {
 }
 
 function oldestStartDate(backlog) {
-  const oldest = parseDate(backlog[0].startDate)
+  let oldest = dateFuns.parseDate(backlog[0].Created)
   for (let i = 1; i < backlog.length - 1; i++) {
-    const d = parseDate(backlog[i].startDate)
+    const d = dateFuns.parseDate(backlog[i].Created)
     if (oldest - d > 0) {
       oldest = d
     }
@@ -26,17 +22,18 @@ function oldestStartDate(backlog) {
 }
 
 function analyse(data, oldest) {
-  const startDate = parseDate(data.startDate)
-  const endDate = parseDate(data.endDate)
+  const startDate = dateFuns.parseDate(data.Created)
+  const endDate = data.Resolved ? dateFuns.parseDate(data.Resolved) : null
   return {
     id: data.id,
     commit: daysDiff(oldest, startDate),
-    delivery: daysDiff(startDate, endDate)
+    delivery: endDate ? daysDiff(startDate, endDate) : null
   }
 }
 
 function createBacklog(data) {
   const oldest = oldestStartDate(data)
+  console.log('oldest', oldest)
   const backlog = []
   for (let i = 0; i < data.length; i++) {
     const analysed = analyse(data[i], oldest)
@@ -47,7 +44,7 @@ function createBacklog(data) {
     }
     backlog.push(card)
   }
-  bus.$emit('sendLoadBacklog', {backlog: backlog})
+  bus.$emit('sendBacklogLoaded', {backlog: backlog})
 }
 
 const FileFuns = {
