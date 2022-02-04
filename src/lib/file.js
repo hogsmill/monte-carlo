@@ -33,17 +33,14 @@ function analyse(data, oldest) {
 
 function startBacklogFrom(data, scope) {
   const backlog = []
-  console.log(scope)
   const from = new Date(scope.year, scope.month, scope.day)
   for (let i = 0; i < data.length; i++) {
     const startDate = dateFuns.parseDate(data[i].Created)
     const endDate = data[i].Resolved ? dateFuns.parseDate(data[i].Resolved) : null
-    console.log(from, startDate, endDate)
     if (daysDiff(from, startDate) >= 0 && (!endDate || daysDiff(from, startDate) >= 0)) {
       backlog.push(data[i])
     }
   }
-  //console.log(backlog)
   return backlog
 }
 

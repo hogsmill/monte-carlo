@@ -13,6 +13,7 @@ export const store = new Vuex.Store({
     backlog: [],
     completed: [],
     scope: '',
+    backlogFrom: null,
     config: {
       runs: 1000,
       runTo: 'Remaining'
@@ -45,6 +46,9 @@ export const store = new Vuex.Store({
     },
     getScope: (state) => {
       return state.scope
+    },
+    getBacklogFrom: (state) => {
+      return state.backlogFrom
     }
   },
   mutations: {
@@ -71,6 +75,11 @@ export const store = new Vuex.Store({
     },
     updateScope: (state, payload) => {
       state.scope = payload
+    },
+    updateBacklogFrom: (state, payload) => {
+      state.backlogFrom = payload.all
+        ? null
+        : payload.day + '/' + payload.month + '/' + payload.year
     }
   },
   actions: {
@@ -91,6 +100,9 @@ export const store = new Vuex.Store({
     },
     updateScope: ({ commit }, payload) => {
       commit('updateScope', payload)
+    },
+    updateBacklogFrom: ({ commit }, payload) => {
+      commit('updateBacklogFrom', payload)
     }
   }
 })

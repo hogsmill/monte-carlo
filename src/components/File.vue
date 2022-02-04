@@ -131,6 +131,7 @@ export default {
         year: this.year,
         all: this.all
       }
+      this.$store.dispatch('updateBacklogFrom', {all: this.all, day: this.day, month: this.month, year: this.year})
       fileFuns.loadBacklog(file, separator, scope)
     }
   }
