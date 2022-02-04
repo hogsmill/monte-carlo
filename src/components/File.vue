@@ -3,18 +3,58 @@
     <tr>
       <td>
         Load from file<br>
-        <i>(Must be CSV, with columns Id, StartDate, EndDate</i>)
+        <i>(Must have columns Created and Resolved</i>)
       </td>
       <td class="upload">
         <table class="inner-table">
           <Delimiter :scope="'load'" />
           <tr>
             <td>
+              File
+            </td>
+            <td>
               <input id="backlog-file" type="file">
             </td>
           </tr>
           <tr>
+            <td rowspan="2">
+              Load
+            </td>
             <td>
+              <input id="full-backlog" type="checkbox" :checked="all" @click="entireBacklog()"> Entire backlog
+            </td>
+          </tr>
+          <tr>
+            <td>
+              From
+              <select id="start-day" :value="day" @change="setDate()">
+                <option value="">
+                  -- DD --
+                </option>
+                <option v-for="(d, index) in 31" :key="index">
+                  {{ d }}
+                </option>
+              </select> /
+              <select id="start-month" :value="month" @change="setDate()">
+                <option value="">
+                  -- MM --
+                </option>
+                <option v-for="(m, index) in 12" :key="index">
+                  {{ monthName(m) }}
+                </option>
+              </select> /
+              <select id="start-year" :value="year" @change="setDate()">
+                <option value="">
+                  -- YY --
+                </option>
+                <option v-for="(y, index) in 5" :key="index">
+                  {{ y + 2020 }}
+                </option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="button-row">
               <button class="btn btn-sm btn-secondary smaller-font" @click="loadBacklog()">
                 Load
               </button>
@@ -29,6 +69,7 @@
 <script>
 import bus from '../socket.js'
 
+import dateFuns from '../lib/dates.js'
 import fileFuns from '../lib/file.js'
 
 import Delimiter from './backlog/Delimiter.vue'
@@ -36,6 +77,15 @@ import Delimiter from './backlog/Delimiter.vue'
 export default {
   components: {
     Delimiter
+  },
+  data() {
+    return {
+      months: {},
+      day: null,
+      month: null,
+      year: null,
+      all: true
+    }
   },
   computed: {
     completed() {
@@ -46,6 +96,8 @@ export default {
     }
   },
   created() {
+    this.months = dateFuns.monthNames()
+
     bus.$on('backlogLoaded', (data) => {
       this.$store.dispatch('updateBacklog', data.backlog)
       alert('Backlog loaded. Backlog has ' + this.backlog.length + ' items, ' + this.completed.length + ' completed')
@@ -53,10 +105,33 @@ export default {
     })
   },
   methods: {
+    monthName(n) {
+      return this.months[n]
+    },
+    entireBacklog() {
+      this.all = !this.all
+      if (this.all) {
+        this.day = null
+        this.month = null
+        this.year = null
+      }
+    },
+    setDate() {
+      this.day = document.getElementById('start-day').value
+      this.month = document.getElementById('start-month').value
+      this.year = document.getElementById('start-year').value
+      this.all = !this.day || !this.month ||! this.year
+    },
     loadBacklog() {
       const file = document.getElementById('backlog-file').files[0]
       const separator = document.getElementById('backlog-load-file-separator').value
-      fileFuns.loadBacklog(file, separator)
+      const scope = {
+        day: this.day,
+        month: dateFuns.months()[this.month],
+        year: this.year,
+        all: this.all
+      }
+      fileFuns.loadBacklog(file, separator, scope)
     }
   }
 }
@@ -64,11 +139,21 @@ export default {
 
 <style lang="scss">
   .backlog {
-    margin: 0 auto;
+    margin: 24px auto;
 
     td {
-      border: 1px solid #888;
       padding: 6px;
+    }
+
+    .inner-table {
+      td {
+        text-align: left;
+        border: 1px solid #888;
+
+        &.button-row {
+          text-align: center;
+        }
+      }
     }
   }
 </style>

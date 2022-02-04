@@ -2,6 +2,8 @@
   <tr>
     <td>
       Delimiter
+    </td>
+    <td>
       <select :id="id()">
         <option value="tab">
           \t (tab)
