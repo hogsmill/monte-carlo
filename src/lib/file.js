@@ -10,6 +10,17 @@ function daysDiff(startDate, endDate) {
   return Math.ceil(diff / (1000 * 60 * 60 * 24))
 }
 
+function newestStartDate(backlog) {
+  let newest = dateFuns.parseDate(backlog[0].Created)
+  for (let i = 1; i < backlog.length - 1; i++) {
+    const d = dateFuns.parseDate(backlog[i].Created)
+    if (d - newest > 0) {
+      newest = d
+    }
+  }
+  return newest
+}
+
 function oldestStartDate(backlog) {
   let oldest = dateFuns.parseDate(backlog[0].Created)
   for (let i = 1; i < backlog.length - 1; i++) {
@@ -27,7 +38,7 @@ function analyse(data, oldest) {
   return {
     id: data.id,
     commit: daysDiff(oldest, startDate),
-    delivery: endDate ? daysDiff(startDate, endDate) : null
+    delivery: endDate ? daysDiff(startDate, endDate) : null,
   }
 }
 
@@ -55,7 +66,8 @@ function createBacklog(data, scope) {
     const card = {
       id: analysed.id,
       commit: analysed.commit,
-      delivery: analysed.delivery
+      delivery: analysed.delivery,
+      Created: data[i].Created
     }
     backlog.push(card)
   }
@@ -91,6 +103,12 @@ const FileFuns = {
 		    createBacklog(results.data, scope)
 	    }
     })
+  },
+
+  calculateRunTo: function(backlog) {
+    const days = daysDiff(oldestStartDate(backlog), newestStartDate(backlog))
+    const cardsPerDay = days / backlog.length
+    return parseInt(backlog.length * (1 + cardsPerDay))
   }
 
 }

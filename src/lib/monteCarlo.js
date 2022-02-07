@@ -13,8 +13,8 @@ function getCardsToRunTo(config, cards, completed) {
     }
   } else {
     runConfig = {
-      from: 0,
-      to: parseInt(config.runTo)
+      from: completed.length,
+      to: parseInt(config.runTo) - completed.length
     }
   }
   return runConfig

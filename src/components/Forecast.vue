@@ -82,6 +82,7 @@
 
 <script>
 import dateFuns from '../lib/dates.js'
+import fileFuns from '../lib/file.js'
 import monteCarlo from '../lib/monteCarlo.js'
 
 export default {
@@ -101,6 +102,9 @@ export default {
     },
     completed() {
       return this.$store.getters.getCompleted
+    },
+    arrivalRate() {
+      return this.$store.getters.getArrivalRate
     }
   },
   methods: {
@@ -110,7 +114,8 @@ export default {
     forecast() {
       const config = {
         runs: 1000,
-        runTo: 'Remaining'
+        runTo: this.arrivalRate ? fileFuns.calculateRunTo(this.backlog) : 'Remaining',
+        arrivalRate: this.arrivalRate
       }
       this.results = monteCarlo.run(this.backlog, this.completed, config)
     }

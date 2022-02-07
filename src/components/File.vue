@@ -54,6 +54,14 @@
             </td>
           </tr>
           <tr>
+            <td>
+              Use Arrival Rate?
+            </td>
+            <td>
+              <input id="arrival-rate" type="checkbox" :checked="arrivalRate" @click="toggleArrivalRate()">
+            </td>
+          </tr>
+          <tr>
             <td colspan="2" class="button-row">
               <button class="btn btn-sm btn-secondary smaller-font" @click="loadBacklog()">
                 Load
@@ -93,6 +101,9 @@ export default {
     },
     backlog() {
       return this.$store.getters.getBacklog
+    },
+    arrivalRate() {
+      return this.$store.getters.getArrivalRate
     }
   },
   created() {
@@ -116,6 +127,10 @@ export default {
         this.year = null
       }
     },
+    toggleArrivalRate() {
+      const arrivalRate = !this.arrivalRate
+      this.$store.dispatch('updateArrivalRate', arrivalRate)
+    },
     setDate() {
       this.day = document.getElementById('start-day').value
       this.month = document.getElementById('start-month').value
@@ -129,7 +144,8 @@ export default {
         day: this.day,
         month: dateFuns.months()[this.month],
         year: this.year,
-        all: this.all
+        all: this.all,
+        arrivalRate: this.arrivalRate
       }
       this.$store.dispatch('updateBacklogFrom', {all: this.all, day: this.day, month: this.month, year: this.year})
       fileFuns.loadBacklog(file, separator, scope)
