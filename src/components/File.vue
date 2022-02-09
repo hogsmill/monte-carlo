@@ -110,7 +110,9 @@ export default {
     this.months = dateFuns.monthNames()
 
     bus.$on('backlogLoaded', (data) => {
+      const newCardsPerDay = this.arrivalRate ? fileFuns.calculateArrivalRate(data.backlog) : 0
       this.$store.dispatch('updateBacklog', data.backlog)
+      this.$store.dispatch('updateNewCardsPerDay', newCardsPerDay)
       alert('Backlog loaded. Backlog has ' + this.backlog.length + ' items, ' + this.completed.length + ' completed')
       document.getElementById('backlog-file').value = ''
     })
@@ -139,16 +141,20 @@ export default {
     },
     loadBacklog() {
       const file = document.getElementById('backlog-file').files[0]
-      const separator = document.getElementById('backlog-load-file-separator').value
-      const scope = {
-        day: this.day,
-        month: dateFuns.months()[this.month],
-        year: this.year,
-        all: this.all,
-        arrivalRate: this.arrivalRate
+      if (!file) {
+        alert('Please select a file')
+      } else {
+        const separator = document.getElementById('backlog-load-file-separator').value
+        const scope = {
+          day: this.day,
+          month: dateFuns.months()[this.month],
+          year: this.year,
+          all: this.all,
+          arrivalRate: this.arrivalRate,
+        }
+        this.$store.dispatch('updateBacklogFrom', {all: this.all, day: this.day, month: this.month, year: this.year})
+        fileFuns.loadBacklog(file, separator, scope)
       }
-      this.$store.dispatch('updateBacklogFrom', {all: this.all, day: this.day, month: this.month, year: this.year})
-      fileFuns.loadBacklog(file, separator, scope)
     }
   }
 }

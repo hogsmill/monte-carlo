@@ -105,10 +105,9 @@ const FileFuns = {
     })
   },
 
-  calculateRunTo: function(backlog) {
+  calculateArrivalRate: function(backlog) {
     const days = daysDiff(oldestStartDate(backlog), newestStartDate(backlog))
-    const cardsPerDay = days / backlog.length
-    return parseInt(backlog.length * (1 + cardsPerDay))
+    return days / backlog.length
   }
 
 }

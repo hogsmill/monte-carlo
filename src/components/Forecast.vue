@@ -105,6 +105,9 @@ export default {
     },
     arrivalRate() {
       return this.$store.getters.getArrivalRate
+    },
+    newCardsPerDay() {
+      return this.$store.getters.getNewCardsPerDay
     }
   },
   methods: {
@@ -112,9 +115,13 @@ export default {
       return dateFuns.daysFromToday(d).toDateString()
     },
     forecast() {
+      let backlogLength
+      if (this.arrivalRate) {
+         backlogLength = parseInt(this.backlog.length * (1 + this.newCardsPerDay))
+      }
       const config = {
         runs: 1000,
-        runTo: this.arrivalRate ? fileFuns.calculateRunTo(this.backlog) : 'Remaining',
+        runTo: this.arrivalRate ? backlogLength : 'Remaining',
         arrivalRate: this.arrivalRate
       }
       this.results = monteCarlo.run(this.backlog, this.completed, config)

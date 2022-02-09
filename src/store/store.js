@@ -15,6 +15,7 @@ export const store = new Vuex.Store({
     scope: '',
     backlogFrom: null,
     arrivalRate: true,
+    newCardsPerDay: 0,
     config: {
       runs: 1000,
       runTo: 'Remaining'
@@ -53,6 +54,9 @@ export const store = new Vuex.Store({
     },
     getArrivalRate: (state) => {
       return state.arrivalRate
+    },
+    getNewCardsPerDay: (state) => {
+      return state.newCardsPerDay
     }
   },
   mutations: {
@@ -88,6 +92,9 @@ export const store = new Vuex.Store({
     updateArrivalRate: (state, payload) => {
       state.arrivalRate = payload
     },
+    updateNewCardsPerDay: (state, payload) => {
+      state.newCardsPerDay = payload
+    }
   },
   actions: {
     updateConnections: ({ commit }, payload) => {
@@ -113,6 +120,9 @@ export const store = new Vuex.Store({
     },
     updateArrivalRate: ({ commit }, payload) => {
       commit('updateArrivalRate', payload)
+    },
+    updateNewCardsPerDay: ({ commit }, payload) => {
+      commit('updateNewCardsPerDay', payload)
     }
   }
 })
