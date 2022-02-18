@@ -3,8 +3,12 @@
     <button class="btn btn-info" @click="forecast()">
       Forecast
     </button>
+    <div class="forecast-display">
+      <i class="fas fa-table" title="Table" :class="{ 'selected': scope == 'table' }" @click="setScope('table')" />
+      <i class="fas fa-chart-line" title="Graph" :class="{ 'selected': scope == 'graph' }" @click="setScope('graph')" />
+    </div>
     <div>
-      <table v-if="results.percentiles[50]" class="results">
+      <table v-if="results.percentiles[50] && scope == 'table'" class="results">
         <thead>
           <tr>
             <th>
@@ -76,6 +80,9 @@
           </tr>
         </tbody>
       </table>
+      <div v-if="scope == 'graph'">
+        <BarChart :chartdata="monteCarlo.data" :options="monteCarlo.options" />
+      </div>
     </div>
   </div>
 </template>
@@ -85,9 +92,15 @@ import dateFuns from '../lib/dates.js'
 import fileFuns from '../lib/file.js'
 import monteCarlo from '../lib/monteCarlo.js'
 
+import BarChart from './forecast/BarChart.vue'
+
 export default {
+  components: {
+    BarChart
+  },
   data() {
     return {
+      scope: 'table',
       results: {
         percentiles: {}
       }
@@ -111,6 +124,9 @@ export default {
     }
   },
   methods: {
+    setScope(scope) {
+      this.scope = scope
+    },
     getDate(d) {
       return dateFuns.daysFromToday(d).toDateString()
     },
@@ -131,6 +147,14 @@ export default {
 </script>
 
 <style lang="scss">
+  .forecast-display {
+    .fas {
+      margin: 3px;
+      font-size: x-large;
+      color: #888;
+    }
+  }
+
   .results {
     margin: 24px auto;
 
