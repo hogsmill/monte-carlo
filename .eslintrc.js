@@ -4,6 +4,14 @@ module.exports = {
       // 'eslint:recommended',
       'plugin:vue/recommended'
     ],
+    "parserOptions": {
+      "ecmaVersion": "latest",
+      "requireConfigFile": false,
+      "sourceType": "module",
+      "ecmaFeatures": {
+          "jsx": true
+      }
+    },
     rules: {
       // override/add rules settings here, such as:
       'no-redeclare': 'warn',
