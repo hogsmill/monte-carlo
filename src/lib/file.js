@@ -71,7 +71,7 @@ function createBacklog(data, scope) {
     }
     backlog.push(card)
   }
-  bus.$emit('sendBacklogLoaded', {backlog: backlog})
+  bus.emit('sendBacklogLoaded', {backlog: backlog})
 }
 
 const FileFuns = {

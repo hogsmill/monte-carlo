@@ -11,6 +11,7 @@
     <Config />
     <File v-if="scope == 'loadBacklog'" />
     <Forecast v-if="scope == 'showForecast'" />
+    <Feedback />
   </div>
 </template>
 
@@ -24,6 +25,7 @@ import Actions from './components/Actions.vue'
 import Config from './components/Config.vue'
 import File from './components/File.vue'
 import Forecast from './components/Forecast.vue'
+import Feedback from './components/modals/Feedback.vue'
 
 export default {
   name: 'App',
@@ -32,7 +34,8 @@ export default {
     Actions,
     Config,
     File,
-    Forecast
+    Forecast,
+    Feedback
   },
   data() {
     return {
@@ -52,11 +55,11 @@ export default {
   created() {
     this.$store.dispatch('localStorageStatus', ls.check())
 
-    bus.$on('connectionError', (data) => {
+    bus.on('connectionError', (data) => {
       this.$store.dispatch('updateConnectionError', data)
     })
 
-    bus.$on('updateConnections', (data) => {
+    bus.on('updateConnections', (data) => {
       this.$store.dispatch('updateConnectionError', null)
       this.$store.dispatch('updateConnections', data)
     })

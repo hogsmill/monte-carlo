@@ -109,7 +109,7 @@ export default {
   created() {
     this.months = dateFuns.monthNames()
 
-    bus.$on('backlogLoaded', (data) => {
+    bus.on('backlogLoaded', (data) => {
       const newCardsPerDay = this.arrivalRate ? fileFuns.calculateArrivalRate(data.backlog) : 0
       this.$store.dispatch('updateBacklog', data.backlog)
       this.$store.dispatch('updateNewCardsPerDay', newCardsPerDay)
