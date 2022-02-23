@@ -34,7 +34,7 @@ if (connectToAgileSimulations) {
   asSocket.on('logout', (data) => { bus.emit('logout', data) })
 }
 
-socket.on('connect_error', (err) => { bus.emit('connectionError', err) })
+//socket.on('connect_error', (err) => { bus.emit('connectionError', err) })
 
 socket.on('updateConnections', (data) => { bus.emit('updateConnections', data) })
 
@@ -44,6 +44,6 @@ bus.on('sendBacklogLoaded', (data) => { bus.emit('backlogLoaded', data) })
 
 // Receive
 
-socket.on('testMessage', (data) => { bus.emit('testMessage', data) })
+//socket.on('testMessage', (data) => { bus.emit('testMessage', data) })
 
 export default bus
