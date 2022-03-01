@@ -34,14 +34,14 @@
                     Id:
                   </td>
                   <td>
-                    <select id="id-field" :value="created" @change="setField('created')">
+                    <select id="id-field" :value="id" @change="setField('id')">
                       <option value="">
                         -- Select --
                       </option>
                       <option v-for="(field, index) in headerFields" :key="index">
                         {{ field }}
                       </option>
-                    </select>                 
+                    </select>
                   </td>
                 </tr>
                 <tr>
@@ -64,7 +64,7 @@
                     Delivered:
                   </td>
                   <td>
-                    <select id="delivered-field" :value="created" @change="setField('created')">
+                    <select id="delivered-field" :value="delivered" @change="setField('delivered')">
                       <option value="">
                         -- Select --
                       </option>
