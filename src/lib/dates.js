@@ -40,6 +40,17 @@ function parseJiraDefault(d) {
   return new Date(year, month, day)
 }
 
+// US Short: 7/15/22 (MM/DD/YY)
+//
+function parseUSShort(d) {
+  d = d.split(' ')[0]
+  d = d.split('/')
+  const year = parseInt(d[2])
+  const month = parseInt(d[0])
+  const day = parseInt(d[1])
+  return new Date(year, month, day)
+}
+
 const DateFuns = {
 
   monthNames: function() {
@@ -50,10 +61,18 @@ const DateFuns = {
     return shortMonths
   },
 
-  parseDate: function(d) {
+  parseDate: function(d, format) {
     let date
-    if (d.match(/^[0-9]+\/[A-Z][a-z]{2}\/[0-9]{2}/)) {
-      date = parseJiraDefault(d)
+    switch(format) {
+      case 'JIRA Default':
+        date = parseJiraDefault(d)
+        break
+      case 'US Short':
+        date = parseUSShort(d)
+        break
+      default:
+        console.log('Invalid dateFormat')
+        break
     }
     return date
   },

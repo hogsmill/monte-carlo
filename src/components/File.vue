@@ -3,17 +3,93 @@
     <tr>
       <td>
         Load from file<br>
-        <i>(Must have columns Created and Resolved</i>)
+        <i>(Must have columns Created and Delivered</i>)
       </td>
       <td class="upload">
         <table class="inner-table">
-          <Delimiter :scope="'load'" />
           <tr>
             <td>
               File
             </td>
             <td>
-              <input id="backlog-file" type="file">
+              <input id="backlog-file" type="file" @change="selectFile()">
+            </td>
+          </tr>
+          <Delimiter :scope="'load'" />
+          <tr>
+            <td colspan="2" class="center">
+              <button class="btn btn-sm btn-secondary smaller-font" :disabled="!fileSelected" @click="getHeaderFields()">
+                Get Field Names
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Field Names
+            </td>
+            <td>
+              <table class="fields">
+                <tr>
+                  <td>
+                    Id:
+                  </td>
+                  <td>
+                    <select id="id-field" :value="created" @change="setField('created')">
+                      <option value="">
+                        -- Select --
+                      </option>
+                      <option v-for="(field, index) in headerFields" :key="index">
+                        {{ field }}
+                      </option>
+                    </select>                 
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Created:
+                  </td>
+                  <td>
+                    <select id="created-field" :value="created" @change="setField('created')">
+                      <option value="">
+                        -- Select --
+                      </option>
+                      <option v-for="(field, index) in headerFields" :key="index">
+                        {{ field }}
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Delivered:
+                  </td>
+                  <td>
+                    <select id="delivered-field" :value="created" @change="setField('created')">
+                      <option value="">
+                        -- Select --
+                      </option>
+                      <option v-for="(field, index) in headerFields" :key="index">
+                        {{ field }}
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Date Format:
+            </td>
+            <td>
+              <select id="dateformat-field" @change="setField('dateformat')" :value="dateformat">
+                <option value="JIRA Default">
+                  12/Feb/22 (JIRA Default)
+                </option>
+                <option value="US Short">
+                  7/15/22 (MM/DD/YY)
+                </option>
+              </select>
             </td>
           </tr>
           <tr>
@@ -88,11 +164,17 @@ export default {
   },
   data() {
     return {
+      id: 'id',
+      created: 'Created',
+      delivered: 'Resolved',
+      dateformat: 'JIRA Default',
       months: {},
       day: null,
       month: null,
       year: null,
-      all: true
+      all: true,
+      fileSelected: false,
+      headerFields: []
     }
   },
   computed: {
@@ -109,8 +191,17 @@ export default {
   created() {
     this.months = dateFuns.monthNames()
 
+    bus.on('updateHeaderFields', (data) => {
+      this.headerFields = data.fields
+    })
+
     bus.on('backlogLoaded', (data) => {
-      const newCardsPerDay = this.arrivalRate ? fileFuns.calculateArrivalRate(data.backlog) : 0
+      const scope = {
+        dateFormat: this.dateformat,
+        created: 'created',
+        delivered: 'delivered'
+      }
+      const newCardsPerDay = this.arrivalRate ? fileFuns.calculateArrivalRate(data.backlog, scope) : 0
       this.$store.dispatch('updateBacklog', data.backlog)
       this.$store.dispatch('updateNewCardsPerDay', newCardsPerDay)
       alert('Backlog loaded. Backlog has ' + this.backlog.length + ' items, ' + this.completed.length + ' completed')
@@ -120,6 +211,24 @@ export default {
   methods: {
     monthName(n) {
       return this.months[n]
+    },
+    selectFile() {
+      this.fileSelected = !!document.getElementById('backlog-file').value
+    },
+    selectDelimiter() {
+      this.delimiter = !!document.getElementById('backlog-load-file-separator').value
+    },
+    setField(field) {
+      this[field] = document.getElementById(field + '-field').value
+    },
+    getHeaderFields() {
+      const file = document.getElementById('backlog-file').files[0]
+      const separator = document.getElementById('backlog-load-file-separator').value
+      if (!separator) {
+        alert('Please select a delimiter')
+      } else {
+        fileFuns.headerFields(file, separator)
+      }
     },
     entireBacklog() {
       this.all = !this.all
@@ -146,6 +255,10 @@ export default {
       } else {
         const separator = document.getElementById('backlog-load-file-separator').value
         const scope = {
+          id: this.id,
+          created: this.created,
+          delivered: this.delivered,
+          dateFormat: this.dateformat,
           day: this.day,
           month: dateFuns.months()[this.month],
           year: this.year,
@@ -166,6 +279,10 @@ export default {
 
     td {
       padding: 6px;
+
+      &.center {
+        text-align: center !important;
+      }
     }
 
     .inner-table {
@@ -176,6 +293,12 @@ export default {
         &.button-row {
           text-align: center;
         }
+      }
+    }
+
+    .fields {
+      td {
+        border: 0;
       }
     }
   }

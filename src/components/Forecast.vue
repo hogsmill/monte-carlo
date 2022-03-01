@@ -136,7 +136,7 @@ export default {
          backlogLength = parseInt(this.backlog.length * (1 + this.newCardsPerDay))
       }
       const config = {
-        runs: 1000,
+        runs: 100000,
         runTo: this.arrivalRate ? backlogLength : 'Remaining',
         arrivalRate: this.arrivalRate
       }

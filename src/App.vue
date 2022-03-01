@@ -50,6 +50,9 @@ export default {
     },
     scope() {
       return this.$store.getters.getScope
+    },
+    newCardsPerDay() {
+      return this.$store.getters.getNewCardsPerDay
     }
   },
   created() {

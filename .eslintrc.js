@@ -24,11 +24,11 @@ module.exports = {
         'multiline': 3
       }]
     },
-    overrides: [
+    'overrides': [
       {
-        files: ['src/**/*.vue'],
-        rules: {
-          'vue/multi-word-component-names': 0,
+        'files': ['src/**/*.vue'],
+        'rules': {
+          'vue/multi-word-component-names': 0
         },
       }
     ],
