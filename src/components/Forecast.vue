@@ -1,8 +1,8 @@
 <template>
   <div class="forecast">
-    <button class="btn btn-info" @click="forecast()">
+    <button v-if="!waiting" class="btn btn-info" @click="forecast()">
       Forecast
-    </button>
+    </button> <i>(Note: this may take a few seconds...)</i>
     <div class="forecast-display">
       <i class="fas fa-table" title="Table" :class="{ 'selected': scope == 'table' }" @click="setScope('table')" />
       <i class="fas fa-chart-line" title="Graph" :class="{ 'selected': scope == 'graph' }" @click="setScope('graph')" />

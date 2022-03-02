@@ -30,7 +30,6 @@ function monteCarloRun(cardsPerDay, noOfCards, startFrom) {
 }
 
 function monteCarlo(cardsPerDay, startFrom, runs, runTo) {
-  console.log(cardsPerDay, startFrom, runs, runTo)
   const results = {}
   for (let i = 0; i < runs; i++) {
     const run = monteCarloRun(cardsPerDay, runTo, startFrom)
@@ -76,7 +75,6 @@ function percentages(counts, days, config) {
         _95 = config.runs * 0.95,
         _99 = config.runs * 0.99
   let count = 0
-  console.log(counts, days, config)
   for (let i = 0; i < config.runs; i++) {
     count = count + counts[i]
     if (count >= _99) {
