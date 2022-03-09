@@ -39,15 +39,15 @@ export default {
       let color
       for (let i = startDay; i < this.monteCarlo.data.datasets[0].data.length + startDay; i++) {
         if (i <= data.results.percentiles[50]) {
-          color = 'grey'
+          color = this.monteCarlo.colors[50]
         } else if (i <= data.results.percentiles[75]) {
-          color = 'green'
+          color = this.monteCarlo.colors[75]
         } else if (i <= data.results.percentiles[90]) {
-          color = 'orange'
+          color = this.monteCarlo.colors[90]
         } else if (i <= data.results.percentiles[95]) {
-          color = 'yellow'
+          color = this.monteCarlo.colors[95]
         } else {
-          color = 'red'
+          color = this.monteCarlo.colors[99]
         }
         this.monteCarlo.data.datasets[0].backgroundColor.push(color)
         this.monteCarlo.data.datasets[0].borderColor.push(color)

@@ -21,6 +21,13 @@ export default {
         95: 0,
         99: 0
       },
+      colors: {
+        50: 'red',
+        75: 'orange',
+        90: 'yellow',
+        95: 'green',
+        99: 'grey'
+      },
       options: {
         scales: {
           y: {
