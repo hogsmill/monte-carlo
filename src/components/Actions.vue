@@ -14,6 +14,9 @@ export default {
   },
   methods: {
     setScope(scope) {
+      if (scope == 'loadBacklog') {
+        this.$store.dispatch('clear')
+      }
       this.$store.dispatch('updateScope', scope)
     }
   }

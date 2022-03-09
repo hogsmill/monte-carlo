@@ -20,6 +20,15 @@ export const store = createStore({
     config: {
       runs: 1000,
       runTo: 'Remaining'
+    },
+    results: {},
+    clearFields: {
+      backlog: [],
+      completed: [],
+      backlogFrom: null,
+      arrivalRate: true,
+      newCardsPerDay: 0,
+      results: {}
     }
   },
   getters: {
@@ -61,6 +70,9 @@ export const store = createStore({
     },
     getNewCardsPerDay: (state) => {
       return state.newCardsPerDay
+    },
+    getResults: (state) => {
+      return state.results
     }
   },
   mutations: {
@@ -94,6 +106,13 @@ export const store = createStore({
     updateScope: (state, payload) => {
       state.scope = payload
     },
+    clear: (state, payload) => {
+      const fields = Object.keys(state.clearFields)
+      for (let i = 0; i < fields.length; i++) {
+        const field = fields[i]
+        state[field] = state.clearFields[field]
+      }
+    },
     updateBacklogFrom: (state, payload) => {
       state.backlogFrom = payload.all
         ? null
@@ -104,6 +123,9 @@ export const store = createStore({
     },
     updateNewCardsPerDay: (state, payload) => {
       state.newCardsPerDay = payload
+    },
+    updateResults: (state, payload) => {
+      state.results = payload
     }
   },
   actions: {
@@ -128,6 +150,9 @@ export const store = createStore({
     updateBacklog: ({ commit }, payload) => {
       commit('updateBacklog', payload)
     },
+    clear: ({ commit }) => {
+      commit('clear')
+    },
     updateScope: ({ commit }, payload) => {
       commit('updateScope', payload)
     },
@@ -139,6 +164,9 @@ export const store = createStore({
     },
     updateNewCardsPerDay: ({ commit }, payload) => {
       commit('updateNewCardsPerDay', payload)
+    },
+    updateResults: ({ commit }, payload) => {
+      commit('updateResults', payload)
     }
   }
 })

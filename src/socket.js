@@ -44,6 +44,8 @@ bus.on('sendBacklogLoaded', (data) => { bus.emit('backlogLoaded', data) })
 
 bus.on('sendUpdateHeaderFields', (data) => { bus.emit('updateHeaderFields', data) })
 
+bus.on('sendForecast', () => { bus.emit('forecast') })
+
 // Receive
 
 //socket.on('testMessage', (data) => { bus.emit('testMessage', data) })
