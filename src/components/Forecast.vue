@@ -10,9 +10,7 @@
     </div>
     <div>
       <Table v-if="results.percentiles && scope == 'table'" />
-      <div v-if="scope == 'graph'">
-        <!-- <BarChart :chartdata="monteCarlo.data" :options="monteCarlo.options" /> -->
-      </div>
+      <Graph v-if="results.percentiles && scope == 'graph'" />
     </div>
   </div>
 </template>
@@ -23,12 +21,12 @@ import bus from '../socket.js'
 import monteCarlo from '../lib/monteCarlo.js'
 
 import Table from './forecast/Table.vue'
-//import BarChart from './forecast/BarChart.vue'
+import Graph from './forecast/Graph.vue'
 
 export default {
   components: {
     Table,
-    //BarChart
+    Graph
   },
   data() {
     return {
