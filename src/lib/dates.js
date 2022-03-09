@@ -40,6 +40,17 @@ function parseJiraDefault(d) {
   return new Date(year, month, day)
 }
 
+// UK Short: 15/07/22 (DD/MM/YY)
+//
+function parseUKShort(d) {
+  d = d.split(' ')[0]
+  d = d.split('/')
+  const year = parseInt(d[2])
+  const month = parseInt(d[1])
+  const day = parseInt(d[0])
+  return new Date(year, month, day)
+}
+
 // US Short: 7/15/22 (MM/DD/YY)
 //
 function parseUSShort(d) {
@@ -66,6 +77,9 @@ const DateFuns = {
     switch(format) {
       case 'JIRA Default':
         date = parseJiraDefault(d)
+        break
+      case 'UK Short':
+        date = parseUKShort(d)
         break
       case 'US Short':
         date = parseUSShort(d)

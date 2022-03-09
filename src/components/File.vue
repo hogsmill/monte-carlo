@@ -86,6 +86,9 @@
                 <option value="JIRA Default">
                   12/Feb/22 (JIRA Default)
                 </option>
+                <option value="UK Short">
+                  15/07/22 (DD/MM/YY)
+                </option>
                 <option value="US Short">
                   7/15/22 (MM/DD/YY)
                 </option>

@@ -104,6 +104,7 @@ module.exports = {
       const cardsPerDay = cardsPerDayDistribution(completed)
       const results = monteCarlo(cardsPerDay.cards, cardsPerDay.startFrom, config.runs, cardsToRunTo.to)
       const max = Math.max(...Object.keys(results))
+      console.log(cardsPerDay, max)
       for (let i = cardsPerDay.startFrom; i <= max; i++) {
         data.days.push(i)
         const result = results[i] ? results[i] : 0
