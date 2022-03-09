@@ -43,9 +43,6 @@ function analyse(data, scope, oldest) {
   const deliveredField = scope.delivered
   const startDate = dateFuns.parseDate(data[createdField], scope.dateFormat)
   const endDate = data[deliveredField] ? dateFuns.parseDate(data[deliveredField], scope.dateFormat) : null
-  if (daysDiff(startDate, endDate) > 0) {
-    console.log(startDate, endDate, data)
-  }
   return {
     id: data[idField],
     commit: daysDiff(oldest, startDate),
