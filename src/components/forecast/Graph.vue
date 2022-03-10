@@ -1,7 +1,7 @@
 <template>
   <div class="graph">
     <div class="monte-carlo-percentiles rounded">
-      Probability of completing cards:
+      Probability of completing all remaining cards:
       <ul>
         <li><div :class="getColor(50)" /> 50% in <b>{{ config.percentiles[50] }}</b> days ({{ getDate(config.percentiles[50]) }})</li>
         <li><div :class="getColor(75)" /> 75% in <b>{{ config.percentiles[75] }}</b> days ({{ getDate(config.percentiles[75]) }})</li>
