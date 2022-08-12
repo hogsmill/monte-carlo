@@ -61,12 +61,12 @@ export default {
 
 <style scoped lang="scss">
 
-  ::v-deep .modal-container {
+  .modal-container {
     display: flex;
     justify-content: center;
     align-items: center;
   }
-  ::v-deep .modal-content {
+  .modal-content {
     display: flex;
     flex-direction: column;
     margin: 0 1rem;

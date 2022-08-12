@@ -58,7 +58,7 @@ function startBacklogFrom(data, scope) {
   for (let i = 0; i < data.length; i++) {
     const startDate = dateFuns.parseDate(data[i][createdField], scope.dateFormat)
     const endDate = data[i][deliveredField] ? dateFuns.parseDate(data[i][deliveredField], scope.dateFormat) : null
-    if (daysDiff(from, startDate) >= 0 && (!endDate || daysDiff(from, startDate) >= 0)) {
+    if (!endDate || daysDiff(from, startDate) >= 0) {
       backlog.push(data[i])
     }
   }
