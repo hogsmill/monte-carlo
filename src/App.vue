@@ -11,7 +11,7 @@
     <Config />
     <File v-if="scope == 'loadBacklog'" />
     <Forecast v-if="scope == 'showForecast'" />
-    <Feedback />
+    <Modals />
   </div>
 </template>
 
@@ -25,7 +25,7 @@ import Actions from './components/Actions.vue'
 import Config from './components/Config.vue'
 import File from './components/File.vue'
 import Forecast from './components/Forecast.vue'
-import Feedback from './components/modals/Feedback.vue'
+import Modals from './components/Modals.vue'
 
 export default {
   name: 'App',
@@ -35,7 +35,7 @@ export default {
     Config,
     File,
     Forecast,
-    Feedback
+    Modals
   },
   data() {
     return {
