@@ -145,6 +145,38 @@
         <td>
           <input id="arrival-rate" type="checkbox" :checked="arrivalRate" @click="toggleArrivalRate()">
           (<i>Recommended - take into account the rate of creation of new items</i>)
+          <div v-if="arrivalRate">
+            Arrival rate percentage:
+            <select id="arrival-rate-percentage" :value="arrivalRatePercentage">
+              <option value="0.1">
+                10
+              </option>
+              <option value="0.1">
+                20
+              </option>
+              <option value="0.25">
+                25
+              </option>
+              <option value="0.33">
+                33
+              </option>
+              <option value="0.5">
+                50
+              </option>
+              <option value="0.75">
+                75
+              </option>
+              <option value="0.9">
+                90
+              </option>
+              <option value="1">
+                100
+              </option>
+            </select>
+            <button class="btn btn-sm btn-secondary smaller-font" @click="updateArrivalRatePercentage()">
+              Change
+            </button>
+          </div>
         </td>
       </tr>
       <tr v-if="step > 2">
@@ -195,6 +227,9 @@ export default {
     },
     arrivalRate() {
       return this.$store.getters.getArrivalRate
+    },
+    arrivalRatePercentage() {
+      return this.$store.getters.getArrivalRatePercentage
     }
   },
   created() {
@@ -208,7 +243,8 @@ export default {
       const scope = {
         dateFormat: this.dateformat,
         created: 'created',
-        delivered: 'delivered'
+        delivered: 'delivered',
+        arrivalRatePercentage: this.arrivalRatePercentage
       }
       const newCardsPerDay = this.arrivalRate ? fileFuns.calculateArrivalRate(data.backlog, scope) : 0
       this.$store.dispatch('updateBacklog', data.backlog)
@@ -263,6 +299,10 @@ export default {
       if (this.all || (this.day && this.month && this.year)) {
         this.step = 4
       }
+    },
+    updateArrivalRatePercentage() {
+      const rate = document.getElementById('arrival-rate-percentage').value
+      this.$store.dispatch('updateArrivalRatePercentage', rate)
     },
     loadBacklog() {
       const file = document.getElementById('backlog-file').files[0]

@@ -16,6 +16,7 @@ export const store = createStore({
     scope: '',
     backlogFrom: null,
     arrivalRate: true,
+    arrivalRatePercentage: 1,
     newCardsPerDay: 0,
     config: {
       runs: 1000,
@@ -67,6 +68,9 @@ export const store = createStore({
     },
     getArrivalRate: (state) => {
       return state.arrivalRate
+    },
+    getArrivalRatePercentage: (state) => {
+      return state.arrivalRatePercentage
     },
     getNewCardsPerDay: (state) => {
       return state.newCardsPerDay
@@ -121,6 +125,9 @@ export const store = createStore({
     updateArrivalRate: (state, payload) => {
       state.arrivalRate = payload
     },
+    updateArrivalRatePercentage: (state, payload) => {
+      state.arrivalRatePercentage = payload
+    },
     updateNewCardsPerDay: (state, payload) => {
       state.newCardsPerDay = payload
     },
@@ -161,6 +168,9 @@ export const store = createStore({
     },
     updateArrivalRate: ({ commit }, payload) => {
       commit('updateArrivalRate', payload)
+    },
+    updateArrivalRatePercentage: ({ commit }, payload) => {
+      commit('updateArrivalRatePercentage', payload)
     },
     updateNewCardsPerDay: ({ commit }, payload) => {
       commit('updateNewCardsPerDay', payload)

@@ -10,7 +10,12 @@
     </h3>
     <h3 v-if="arrivalRate">
       Forecasting to complete {{ backlogLength() }} items using {{ config.runs }} runs<br>
-      (<i>Remaining {{ backlog.length - completed.length }} items plus {{ remaining() }} predicted new items</i>)
+      (<i>Remaining {{ backlog.length - completed.length }}
+        items plus {{ remaining() }} predicted new items
+        <span v-if="arrivalRate && arrivalRatePercentage < 1">
+          ({{ arrivalRatePercentage * 100 }}% of arrival rate)
+        </span>
+      </i>)
     </h3>
   </div>
 </template>
@@ -32,6 +37,9 @@ export default {
     },
     arrivalRate() {
       return this.$store.getters.getArrivalRate
+    },
+    arrivalRatePercentage() {
+      return this.$store.getters.getArrivalRatePercentage
     },
     newCardsPerDay() {
       return this.$store.getters.getNewCardsPerDay

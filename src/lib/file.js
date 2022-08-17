@@ -143,7 +143,7 @@ const FileFuns = {
 
   calculateArrivalRate: function(backlog, scope) {
     const days = daysDiff(oldestStartDate(backlog, scope), newestStartDate(backlog, scope))
-    return days / backlog.length
+    return (days / backlog.length) * scope.arrivalRatePercentage
   }
 
 }
