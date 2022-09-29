@@ -147,7 +147,7 @@
           (<i>Recommended - take into account the rate of creation of new items</i>)
           <div v-if="arrivalRate">
             Arrival rate percentage:
-            <select id="arrival-rate-percentage" :value="arrivalRatePercentage">
+            <select id="arrival-rate-percentage" :value="arrivalRatePercentage" @change="updateArrivalRatePercentage()">
               <option value="0.1">
                 10
               </option>
@@ -173,9 +173,6 @@
                 100
               </option>
             </select>
-            <button class="btn btn-sm btn-secondary smaller-font" @click="updateArrivalRatePercentage()">
-              Change
-            </button>
           </div>
         </td>
       </tr>
