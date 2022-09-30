@@ -4,7 +4,7 @@
       Delimiter
     </td>
     <td>
-      <select :id="id()">
+      <select :id="id()" @change="updateDelimiter()" :value="current.delimiter">
         <option value="tab">
           \t (tab)
         </option>
@@ -30,9 +30,18 @@ export default {
   props: [
     'scope'
   ],
+  computed: {
+    current() {
+      return this.$store.getters.getCurrent
+    }
+  },
   methods: {
     id() {
       return this.scope == 'load' ? 'backlog-load-file-separator' : 'backlog-save-file-separator'
+    },
+    updateDelimiter() {
+      const delimiter = document.getElementById(this.id()).value
+      this.$store.dispatch('updateCurrent', {field: 'delimiter', value: delimiter})
     }
   }
 }

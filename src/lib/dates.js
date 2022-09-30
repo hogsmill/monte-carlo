@@ -85,7 +85,7 @@ const DateFuns = {
         date = parseUSShort(d)
         break
       default:
-        console.log('Invalid dateFormat')
+        console.log('Invalid dateFormat ' + format)
         break
     }
     return date

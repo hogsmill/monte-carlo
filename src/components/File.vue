@@ -1,15 +1,16 @@
 <template>
   <div>
     <div class="instructions">
-      <div v-if="step == 1">
+      <div v-if="!current.headerFieldsFound">
         1) Select a file and delimiter, then click '<b>Get Field Names</b>'
       </div>
-      <div v-if="step == 2">
-        2) Select the correct fields for Id, Creation date and completed date
+      <div v-if="current.headerFieldsFound && !fieldsSelected()">
+        2) Select the correct fields for <b>Id</b>, <b>Creation Date</b> and
+        <b>Completed Date</b>
       </div>
-      <div v-if="step == 3">
-        3) Select the correct date format, and how much of the backlog to load. Note: it is best to
-        use the last few months maximum to get the best predictions.
+      <div v-if="fieldsSelected() && !current.dateFormat">
+        3) Select the correct <b>Date Format</b>, and how much of the backlog to load. <br>
+        Note: it is best to use the last few months maximum to get the best predictions.
       </div>
     </div>
     <table class="backlog">
@@ -19,17 +20,19 @@
         </td>
         <td>
           <input id="backlog-file" type="file" @change="selectFile()">
+          <br>
+          Current File: {{ current.file ? current.file.name : 'No File Selected' }}
         </td>
       </tr>
       <Delimiter :scope="'load'" />
       <tr>
         <td colspan="2" class="center">
-          <button class="btn btn-sm btn-secondary smaller-font" :disabled="!fileSelected" @click="getHeaderFields()">
+          <button class="btn btn-sm btn-secondary smaller-font" :disabled="!current.file" @click="getHeaderFields()">
             Get Field Names
           </button>
         </td>
       </tr>
-      <tr v-if="step > 1">
+      <tr v-if="fileSelected() && current.headerFieldsFound">
         <td>
           Field Names
         </td>
@@ -40,11 +43,11 @@
                 Id:
               </td>
               <td>
-                <select id="id-field" :value="id" @change="setField('id')">
+                <select id="id-field" :value="current.fieldNames.id" @change="setField('id')">
                   <option value="">
                     -- Select --
                   </option>
-                  <option v-for="(field, index) in headerFields" :key="index">
+                  <option v-for="(field, index) in current.headerFields" :key="index">
                     {{ field }}
                   </option>
                 </select>
@@ -55,11 +58,11 @@
                 Created:
               </td>
               <td>
-                <select id="created-field" :value="created" @change="setField('created')">
+                <select id="created-field" :value="current.fieldNames.created" @change="setField('created')">
                   <option value="">
                     -- Select --
                   </option>
-                  <option v-for="(field, index) in headerFields" :key="index">
+                  <option v-for="(field, index) in current.headerFields" :key="index">
                     {{ field }}
                   </option>
                 </select>
@@ -70,11 +73,11 @@
                 Delivered:
               </td>
               <td>
-                <select id="delivered-field" :value="delivered" @change="setField('delivered')">
+                <select id="delivered-field" :value="current.fieldNames.delivered" @change="setField('delivered')">
                   <option value="">
                     -- Select --
                   </option>
-                  <option v-for="(field, index) in headerFields" :key="index">
+                  <option v-for="(field, index) in current.headerFields" :key="index">
                     {{ field }}
                   </option>
                 </select>
@@ -83,12 +86,15 @@
           </table>
         </td>
       </tr>
-      <tr v-if="step > 2">
+      <tr v-if="fieldsSelected()">
         <td>
           Date Format:
         </td>
         <td>
-          <select id="dateformat-field" @change="setField('dateformat')" :value="dateformat">
+          <select id="date-format" @change="setDateFormat()" :value="this.current.dateFormat">
+            <option>
+              -- Select --
+            </option>
             <option value="JIRA Default">
               12/Feb/22 (JIRA Default)
             </option>
@@ -101,18 +107,18 @@
           </select>
         </td>
       </tr>
-      <tr v-if="step > 2">
+      <tr v-if="fieldsSelected()">
         <td rowspan="2">
           Load
         </td>
         <td>
-          <input id="full-backlog" type="checkbox" :checked="all" @click="entireBacklog()"> Entire backlog
+          <input id="full-backlog" type="checkbox" :checked="current.all" @click="entireBacklog()"> Entire backlog
         </td>
       </tr>
-      <tr v-if="step > 2">
+      <tr v-if="fieldsSelected()">
         <td>
           From
-          <select id="start-day" :value="day" @change="setDate()">
+          <select id="start-day" :value="current.day" @change="setDate()">
             <option value="">
               -- DD --
             </option>
@@ -120,7 +126,7 @@
               {{ d }}
             </option>
           </select> /
-          <select id="start-month" :value="month" @change="setDate()">
+          <select id="start-month" :value="current.month" @change="setDate()">
             <option value="">
               -- MM --
             </option>
@@ -128,7 +134,7 @@
               {{ monthName(m) }}
             </option>
           </select> /
-          <select id="start-year" :value="year" @change="setDate()">
+          <select id="start-year" :value="current.year" @change="setDate()">
             <option value="">
               -- YY --
             </option>
@@ -138,16 +144,16 @@
           </select>
         </td>
       </tr>
-      <tr v-if="step > 2">
+      <tr v-if="fieldsSelected()">
         <td>
           Use Arrival Rate?
         </td>
         <td>
-          <input id="arrival-rate" type="checkbox" :checked="arrivalRate" @click="toggleArrivalRate()">
+          <input id="arrival-rate" type="checkbox" :checked="current.arrivalRate" @click="toggleArrivalRate()">
           (<i>Recommended - take into account the rate of creation of new items</i>)
-          <div v-if="arrivalRate">
+          <div v-if="current.arrivalRate">
             Arrival rate percentage:
-            <select id="arrival-rate-percentage" :value="arrivalRatePercentage" @change="updateArrivalRatePercentage()">
+            <select id="arrival-rate-percentage" :value="current.arrivalRatePercentage" @change="updateArrivalRatePercentage()">
               <option value="0.1">
                 10
               </option>
@@ -176,7 +182,7 @@
           </div>
         </td>
       </tr>
-      <tr v-if="step > 2">
+      <tr v-if="fieldsSelected()">
         <td colspan="2" class="button-row">
           <button class="btn btn-sm btn-secondary smaller-font" @click="loadBacklog()">
             Load
@@ -201,17 +207,7 @@ export default {
   },
   data() {
     return {
-      step: 1,
-      id: 'id',
-      created: 'Created',
-      delivered: 'Resolved',
-      dateformat: 'JIRA Default',
       months: {},
-      day: null,
-      month: null,
-      year: null,
-      all: true,
-      fileSelected: false,
       headerFields: []
     }
   },
@@ -222,28 +218,25 @@ export default {
     backlog() {
       return this.$store.getters.getBacklog
     },
-    arrivalRate() {
-      return this.$store.getters.getArrivalRate
-    },
-    arrivalRatePercentage() {
-      return this.$store.getters.getArrivalRatePercentage
+    current() {
+      return this.$store.getters.getCurrent
     }
   },
   created() {
     this.months = dateFuns.monthNames()
 
     bus.on('updateHeaderFields', (data) => {
-      this.headerFields = data.fields
+      this.$store.dispatch('updateCurrent', {field: 'headerFields', value: data.fields})
     })
 
     bus.on('backlogLoaded', (data) => {
       const scope = {
-        dateFormat: this.dateformat,
+        dateFormat: this.current.dateFormat,
         created: 'created',
         delivered: 'delivered',
-        arrivalRatePercentage: this.arrivalRatePercentage
+        arrivalRatePercentage: this.current.arrivalRatePercentage
       }
-      const newCardsPerDay = this.arrivalRate ? fileFuns.calculateArrivalRate(data.backlog, scope) : 0
+      const newCardsPerDay = this.current.arrivalRate ? fileFuns.calculateArrivalRate(data.backlog, scope) : 0
       this.$store.dispatch('updateBacklog', data.backlog)
       this.$store.dispatch('updateNewCardsPerDay', newCardsPerDay)
       alert('Backlog loaded. Backlog has ' + this.backlog.length + ' items, ' + this.completed.length + ' completed')
@@ -254,72 +247,99 @@ export default {
     monthName(n) {
       return this.months[n]
     },
+    fileSelected() {
+      return this.current.file
+    },
+    fieldsSelected() {
+      return this.fileSelected && this.current.fieldNames.id &&
+             this.current.fieldNames.created && this.current.fieldNames.delivered
+    },
     selectFile() {
-      this.fileSelected = !!document.getElementById('backlog-file').value
+      const file = document.getElementById('backlog-file').files[0]
+      this.$store.dispatch('updateCurrent', {field: 'file', value: file})
+      this.$store.dispatch('updateCurrent', {field: 'headerFieldsFound', value: false})
     },
     selectDelimiter() {
       this.delimiter = !!document.getElementById('backlog-load-file-separator').value
     },
+    setDateFormat() {
+      const format = document.getElementById('date-format').value
+      this.$store.dispatch('updateCurrent', {field: 'dateFormat', value: format})
+    },
     setField(field) {
-      this[field] = document.getElementById(field + '-field').value
-      if (this.id && this.created && this.delivered) {
-        this.step = 3
-      }
+      const value = document.getElementById(field + '-field').value
+      this.$store.dispatch('updateCurrentField', {field: field, value: value})
     },
     getHeaderFields() {
-      const file = document.getElementById('backlog-file').files[0]
+      const file = this.current.file
       const separator = document.getElementById('backlog-load-file-separator').value
       if (!separator) {
         alert('Please select a delimiter')
       } else {
         fileFuns.headerFields(file, separator)
-        this.step = 2
+        this.$store.dispatch('updateCurrent', {field: 'headerFieldsFound', value: true})
       }
     },
     entireBacklog() {
-      this.all = !this.all
-      if (this.all) {
-        this.day = null
-        this.month = null
-        this.year = null
+      if (document.getElementById('full-backlog').checked) {
+        this.$store.dispatch('updateCurrent', {field: 'day', value: ''})
+        this.$store.dispatch('updateCurrent', {field: 'month', value: ''})
+        this.$store.dispatch('updateCurrent', {field: 'year', value: ''})
+        this.$store.dispatch('updateCurrent', {field: 'all', value: true})
       }
     },
     toggleArrivalRate() {
-      const arrivalRate = !this.arrivalRate
-      this.$store.dispatch('updateArrivalRate', arrivalRate)
+      const arrivalRate = document.getElementById('arrival-rate').value
+      this.$store.dispatch('updateCurrent', {field: 'arrivalRate', value: arrivalRate})
+    },
+    all() {
+      return !this.current.day || !this.current.month || !this.current.year
     },
     setDate() {
-      this.day = document.getElementById('start-day').value
-      this.month = document.getElementById('start-month').value
-      this.year = document.getElementById('start-year').value
-      this.all = !this.day || !this.month || !this.year
-      if (this.all || (this.day && this.month && this.year)) {
-        this.step = 4
-      }
+      const day = document.getElementById('start-day').value
+      const month = document.getElementById('start-month').value
+      const year = document.getElementById('start-year').value
+      this.$store.dispatch('updateCurrent', {field: 'day', value: day})
+      this.$store.dispatch('updateCurrent', {field: 'month', value: month})
+      this.$store.dispatch('updateCurrent', {field: 'year', value: year})
+      this.$store.dispatch('updateCurrent', {field: 'all', value: this.all()})
     },
     updateArrivalRatePercentage() {
       const rate = document.getElementById('arrival-rate-percentage').value
-      this.$store.dispatch('updateArrivalRatePercentage', rate)
+      this.$store.dispatch('updateCurrent', {field: 'arrivalRatePercentage', value: rate})
+    },
+    readyToLoad() {
+      return this.current.file &&
+        this.current.delimiter &&
+        this.current.fieldNames.id &&
+        this.current.fieldNames.created &&
+        this.current.fieldNames.delivered &&
+        this.current.dateFormat
     },
     loadBacklog() {
-      const file = document.getElementById('backlog-file').files[0]
-      if (!file) {
-        alert('Please select a file')
+      if (!this.readyToLoad()) {
+        alert('Please complete all fields')
       } else {
-        const separator = document.getElementById('backlog-load-file-separator').value
         const scope = {
-          id: this.id,
-          created: this.created,
-          delivered: this.delivered,
-          dateFormat: this.dateformat,
-          day: this.day,
-          month: dateFuns.months()[this.month],
-          year: this.year,
-          all: this.all,
-          arrivalRate: this.arrivalRate,
+          delimiter: this.current.delimiter,
+          id: this.current.id,
+          created: this.current.fieldNames.created,
+          delivered: this.current.fieldNames.delivered,
+          dateFormat: this.current.dateFormat,
+          day: this.current.day,
+          month: dateFuns.months()[this.current.month],
+          year: this.current.year,
+          all: this.current.all,
+          arrivalRate: this.current.arrivalRate,
         }
-        this.$store.dispatch('updateBacklogFrom', {all: this.all, day: this.day, month: this.month, year: this.year})
-        fileFuns.loadBacklog(file, separator, scope)
+        this.$store.dispatch('updateBacklogFrom', {
+          delimiter: scope.delimiter,
+          all: scope.all,
+          day: scope.day,
+          month: scope.month,
+          year: scope.year
+        })
+        fileFuns.loadBacklog(this.current.file, scope)
       }
     }
   }

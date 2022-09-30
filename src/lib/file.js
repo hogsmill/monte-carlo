@@ -128,11 +128,9 @@ const FileFuns = {
     })
   },
 
-  loadBacklog: function(file, separator, scope) {
-
-
+  loadBacklog: function(file, scope) {
     const results = papa.parse(file, {
-      delimiter: getSeparator(separator),
+      delimiter: getSeparator(scope.delimiter),
       header: true,
       skipEmptyLines: true,
 	    complete: function(results) {
@@ -145,7 +143,6 @@ const FileFuns = {
     const days = daysDiff(oldestStartDate(backlog, scope), newestStartDate(backlog, scope))
     return (days / backlog.length) * scope.arrivalRatePercentage
   }
-
 }
 
 export default FileFuns

@@ -15,12 +15,28 @@ export const store = createStore({
     completed: [],
     scope: '',
     backlogFrom: null,
-    arrivalRate: true,
-    arrivalRatePercentage: 1,
     newCardsPerDay: 0,
     config: {
       runs: 1000,
       runTo: 'Remaining'
+    },
+    current: {
+      file: '',
+      delimiter: '',
+      headerFieldsFound: '',
+      headerFields: [],
+      fieldNames: {
+        id: '',
+        created: '',
+        delivered: ''
+      },
+      dateFormat: '',
+      all: true,
+      day: '',
+      month: '',
+      year: '',
+      arrivalRate: true,
+      arrivalRatePercentage: 1,
     },
     results: {},
     clearFields: {
@@ -54,6 +70,9 @@ export const store = createStore({
     getConfig: (state) => {
       return state.config
     },
+    getCurrent: (state) => {
+      return state.current
+    },
     getBacklog: (state) => {
       return state.backlog
     },
@@ -65,12 +84,6 @@ export const store = createStore({
     },
     getBacklogFrom: (state) => {
       return state.backlogFrom
-    },
-    getArrivalRate: (state) => {
-      return state.arrivalRate
-    },
-    getArrivalRatePercentage: (state) => {
-      return state.arrivalRatePercentage
     },
     getNewCardsPerDay: (state) => {
       return state.newCardsPerDay
@@ -98,6 +111,12 @@ export const store = createStore({
     updateTab: (state, payload) => {
       state.tab = payload
     },
+    updateCurrent: (state, payload) => {
+      state.current[payload.field] = payload.value
+    },
+    updateCurrentField: (state, payload) => {
+      state.current.fieldNames[payload.field] = payload.value
+    },
     updateBacklog: (state, payload) => {
       state.backlog = payload
       state.completed = []
@@ -121,12 +140,6 @@ export const store = createStore({
       state.backlogFrom = payload.all
         ? null
         : payload.day + '/' + payload.month + '/' + payload.year
-    },
-    updateArrivalRate: (state, payload) => {
-      state.arrivalRate = payload
-    },
-    updateArrivalRatePercentage: (state, payload) => {
-      state.arrivalRatePercentage = payload
     },
     updateNewCardsPerDay: (state, payload) => {
       state.newCardsPerDay = payload
@@ -154,6 +167,12 @@ export const store = createStore({
     updateTab: ({ commit }, payload) => {
       commit('updateTab', payload)
     },
+    updateCurrent: ({ commit }, payload) => {
+      commit('updateCurrent', payload)
+    },
+    updateCurrentField: ({ commit }, payload) => {
+      commit('updateCurrentField', payload)
+    },
     updateBacklog: ({ commit }, payload) => {
       commit('updateBacklog', payload)
     },
@@ -165,12 +184,6 @@ export const store = createStore({
     },
     updateBacklogFrom: ({ commit }, payload) => {
       commit('updateBacklogFrom', payload)
-    },
-    updateArrivalRate: ({ commit }, payload) => {
-      commit('updateArrivalRate', payload)
-    },
-    updateArrivalRatePercentage: ({ commit }, payload) => {
-      commit('updateArrivalRatePercentage', payload)
     },
     updateNewCardsPerDay: ({ commit }, payload) => {
       commit('updateNewCardsPerDay', payload)

@@ -5,15 +5,15 @@
       <span v-if="backlogFrom">(from {{ backlogFrom }})</span>
       {{ backlog.length }} items, {{ completed.length }} completed
     </h2>
-    <h3 v-if="!arrivalRate">
+    <h3 v-if="!current.arrivalRate">
       Forecasting to complete remaining {{ backlog.length - completed.length }} items using {{ config.runs }} runs
     </h3>
-    <h3 v-if="arrivalRate">
+    <h3 v-if="current.arrivalRate">
       Forecasting to complete {{ backlogLength() }} items using {{ config.runs }} runs<br>
       (<i>Remaining {{ backlog.length - completed.length }}
         items plus {{ remaining() }} predicted new items
-        <span v-if="arrivalRate && arrivalRatePercentage < 1">
-          ({{ arrivalRatePercentage * 100 }}% of arrival rate)
+        <span v-if="current.arrivalRate && current.arrivalRatePercentage < 1">
+          ({{ current.arrivalRatePercentage * 100 }}% of arrival rate)
         </span>
       </i>)
     </h3>
@@ -35,11 +35,8 @@ export default {
     completed() {
       return this.$store.getters.getCompleted
     },
-    arrivalRate() {
-      return this.$store.getters.getArrivalRate
-    },
-    arrivalRatePercentage() {
-      return this.$store.getters.getArrivalRatePercentage
+    current() {
+      return this.$store.getters.getCurrent
     },
     newCardsPerDay() {
       return this.$store.getters.getNewCardsPerDay

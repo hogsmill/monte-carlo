@@ -9,6 +9,7 @@
       <i class="fas fa-chart-line" title="Show results graph" :class="{ 'selected': scope == 'graph' }" @click="setScope('graph')" />
     </div>
     <div>
+      <ArrivalRate />
       <Table v-if="results.percentiles && scope == 'table'" />
       <Graph v-if="results.percentiles && scope == 'graph'" />
     </div>
@@ -20,11 +21,13 @@ import bus from '../socket.js'
 
 import monteCarlo from '../lib/monteCarlo.js'
 
+import ArrivalRate from './forecast/ArrivalRate.vue'
 import Table from './forecast/Table.vue'
 import Graph from './forecast/Graph.vue'
 
 export default {
   components: {
+    ArrivalRate,
     Table,
     Graph
   },
@@ -43,8 +46,8 @@ export default {
     completed() {
       return this.$store.getters.getCompleted
     },
-    arrivalRate() {
-      return this.$store.getters.getArrivalRate
+    current() {
+      return this.$store.getters.getCurrent
     },
     newCardsPerDay() {
       return this.$store.getters.getNewCardsPerDay
@@ -68,13 +71,13 @@ export default {
     },
     forecast() {
       let backlogLength
-      if (this.arrivalRate) {
+      if (this.current.arrivalRate) {
          backlogLength = parseInt(this.backlog.length * (1 + this.newCardsPerDay))
       }
       const config = {
         runs: 10000,
-        runTo: this.arrivalRate ? backlogLength : 'Remaining',
-        arrivalRate: this.arrivalRate
+        runTo: this.current.arrivalRate ? backlogLength : 'Remaining',
+        arrivalRate: this.current.arrivalRate
       }
       const results = monteCarlo.run(this.backlog, this.completed, config)
       this.setScope('table')
