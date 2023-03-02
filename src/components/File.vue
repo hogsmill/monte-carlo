@@ -91,7 +91,7 @@
           Date Format:
         </td>
         <td>
-          <select id="date-format" @change="setDateFormat()" :value="this.current.dateFormat">
+          <select id="date-format" @change="setDateFormat()" :value="current.dateFormat">
             <option>
               -- Select --
             </option>
@@ -226,6 +226,7 @@ export default {
     this.months = dateFuns.monthNames()
 
     bus.on('updateHeaderFields', (data) => {
+      this.updateDefault('headerFields', data.fields)
       this.$store.dispatch('updateCurrent', {field: 'headerFields', value: data.fields})
     })
 
@@ -244,6 +245,16 @@ export default {
     })
   },
   methods: {
+    updateDefault(field, value) {
+      if (this.current.company && this.current.team) {
+        bus.emit('sendUpdateDefault', {
+          company: this.current.company,
+          team: this.current.team,
+          field: field,
+          value: value
+        })
+      }
+    },
     monthName(n) {
       return this.months[n]
     },
@@ -264,19 +275,22 @@ export default {
     },
     setDateFormat() {
       const format = document.getElementById('date-format').value
+      this.updateDefault('dateFormat', format)
       this.$store.dispatch('updateCurrent', {field: 'dateFormat', value: format})
     },
     setField(field) {
       const value = document.getElementById(field + '-field').value
       this.$store.dispatch('updateCurrentField', {field: field, value: value})
+      this.updateDefault('fieldNames', this.current.fieldNames)
     },
     getHeaderFields() {
       const file = this.current.file
-      const separator = document.getElementById('backlog-load-file-separator').value
+      const separator = this.current.delimiter
       if (!separator) {
         alert('Please select a delimiter')
       } else {
         fileFuns.headerFields(file, separator)
+        this.updateDefault('delimiter', separator)
         this.$store.dispatch('updateCurrent', {field: 'headerFieldsFound', value: true})
       }
     },
@@ -317,6 +331,7 @@ export default {
         this.current.dateFormat
     },
     loadBacklog() {
+      console.log(this.current)
       if (!this.readyToLoad()) {
         alert('Please complete all fields')
       } else {

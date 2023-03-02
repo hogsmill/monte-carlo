@@ -27,7 +27,7 @@
           <a class="nav-link pointer" @click="updateTab('forecast')">Forecast</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link pointer" @click="show()">Feedback</a>
+          <a class="nav-link pointer" @click="showFeedback()">Feedback</a>
         </li>
       </ul>
     </div>
@@ -54,7 +54,7 @@ export default {
     updateTab(tab) {
       this.$store.dispatch('updateTab', tab)
     },
-    show() {
+    showFeedback() {
       this.$store.dispatch('showModal', 'feedback')
     }
   }

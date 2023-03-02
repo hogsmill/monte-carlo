@@ -1,5 +1,9 @@
 <template>
   <div class="forecast">
+    {{ current }}
+    <h2 v-if="current.company">
+      {{ current.company }}<span v-if="current.team"> / {{ current.team }}</span>
+    </h2>
     <h2>
       Current Backlog:
       <span v-if="backlogFrom">(from {{ backlogFrom }})</span>

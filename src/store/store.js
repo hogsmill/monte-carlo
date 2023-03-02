@@ -1,15 +1,38 @@
 
 import { createStore } from 'vuex'
 
+function setDefaults(state) {
+  console.log('setting defaults')
+  for (let i = 0; i < state.companies.length; i++) {
+    if (state.companies[i].name == state.current.company) {
+      const teams = state.companies[i].teams
+      for (let j = 0; j < teams.length; j++) {
+        if (teams[j].name == state.current.team) {
+          console.log(4)
+          const keys = Object.keys(teams[i].defaults)
+          const defaults = teams[j].defaults
+          for (let k = 0; k < keys.length; k++) {
+            state.current[keys[k]] = defaults[keys[k]]
+          }
+        }
+      }
+    }
+  }
+  console.log(state.current)
+  return state.current
+}
+
 export const store = createStore({
   state: {
     thisGame: 'Monte Carlo Forecasting',
     modals: {
+      setup: false,
       feedback: false
     },
     connections: 0,
     connectionError: null,
     localStorageStatus: true,
+    companies: [],
     tab: 'forecast',
     backlog: [],
     completed: [],
@@ -21,6 +44,8 @@ export const store = createStore({
       runTo: 'Remaining'
     },
     current: {
+      company: '',
+      team: '',
       file: '',
       delimiter: '',
       headerFieldsFound: '',
@@ -70,6 +95,9 @@ export const store = createStore({
     getConfig: (state) => {
       return state.config
     },
+    getCompanies: (state) => {
+      return state.companies
+    },
     getCurrent: (state) => {
       return state.current
     },
@@ -110,6 +138,13 @@ export const store = createStore({
     },
     updateTab: (state, payload) => {
       state.tab = payload
+    },
+    updateCompanies: (state, payload) => {
+      state.companies = payload.companies
+      if (state.current.company && state.current.team) {
+        state.current = setDefaults(state)
+        console.log(state.current)
+      }
     },
     updateCurrent: (state, payload) => {
       state.current[payload.field] = payload.value
@@ -166,6 +201,9 @@ export const store = createStore({
     },
     updateTab: ({ commit }, payload) => {
       commit('updateTab', payload)
+    },
+    updateCompanies: ({ commit }, payload) => {
+      commit('updateCompanies', payload)
     },
     updateCurrent: ({ commit }, payload) => {
       commit('updateCurrent', payload)

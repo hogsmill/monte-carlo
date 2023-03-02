@@ -117,6 +117,7 @@ const FileFuns = {
       skipEmptyLines: true,
 	    complete: function(results) {
         const fields = Object.keys(results.data[0])
+        console.log(fields)
         const header = []
         for (let i = 0; i < fields.length; i++) {
           if (!fields[i].match(/^Custom field/)) {

@@ -1,14 +1,17 @@
 <template>
   <div>
+    <Setup v-if="modals['setup']" />
     <Feedback v-if="modals['feedback']" />
   </div>
 </template>
 
 <script>
+import Setup from './modals/Setup.vue'
 import Feedback from './modals/Feedback.vue'
 
 export default {
   components: {
+    Setup,
     Feedback
   },
   computed: {

@@ -37,10 +37,6 @@ export default {
     Forecast,
     Modals
   },
-  data() {
-    return {
-    }
-  },
   computed: {
     connectionError() {
       return this.$store.getters.getConnectionError
@@ -65,6 +61,15 @@ export default {
     bus.on('updateConnections', (data) => {
       this.$store.dispatch('updateConnectionError', null)
       this.$store.dispatch('updateConnections', data)
+    })
+
+    bus.on('updateCompanies', (data) => {
+      this.$store.dispatch('updateCompanies', data)
+    })
+
+    bus.on('updateDefaults', (data) => {
+      console.log(data)
+      //this.$store.dispatch('updateCompanies', data)
     })
   }
 }

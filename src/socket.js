@@ -34,20 +34,28 @@ if (connectToAgileSimulations) {
   asSocket.on('logout', (data) => { bus.emit('logout', data) })
 }
 
-//socket.on('connect_error', (err) => { bus.emit('connectionError', err) })
+socket.on('connect_error', (err) => { bus.emit('connectionError', err) })
 
 socket.on('updateConnections', (data) => { bus.emit('updateConnections', data) })
 
 // Send
 
-bus.on('sendBacklogLoaded', (data) => { bus.emit('backlogLoaded', data) })
+bus.on('sendGetCompanies', () => { socket.emit('sendGetCompanies') })
+
+bus.on('sendGetDefault', () => { socket.emit('sendGetDefault') })
+
+bus.on('sendAddCompany', (data) => { socket.emit('sendAddCompany', data) })
+
+bus.on('sendUpdateDefault', (data) => { socket.emit('sendUpdateDefault', data) })
 
 bus.on('sendUpdateHeaderFields', (data) => { bus.emit('updateHeaderFields', data) })
+
+bus.on('sendBacklogLoaded', (data) => { bus.emit('backlogLoaded', data) })
 
 bus.on('sendForecast', () => { bus.emit('forecast') })
 
 // Receive
 
-//socket.on('testMessage', (data) => { bus.emit('testMessage', data) })
+socket.on('updateCompanies', (data) => { bus.emit('updateCompanies', data) })
 
 export default bus
